@@ -1,7 +1,9 @@
 #ifndef QTSENAMAINWINDOW_H
 #define QTSENAMAINWINDOW_H
 
+#include <QHBoxLayout>
 #include <QMainWindow>
+
 #include "numbersgrid.h"
 
 namespace Ui {
@@ -14,13 +16,16 @@ class QtSEnaMainWindow : public QMainWindow
     
 private:
     Ui::QtSEnaMainWindow *ui;
-    NumbersGrid *testWidget;
+    NumbersGrid *numbersGridWidget;
+    QHBoxLayout *numbersGridLayout;
+
+private slots:
+    void update();
 
 public:
     explicit QtSEnaMainWindow(QWidget *parent = 0);
     ~QtSEnaMainWindow();
 
-    
 };
 
 #endif // QTSENAMAINWINDOW_H
