@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>720</width>
+    <height>380</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Qt SuperEnalotto</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QGroupBox" name="numbersGridBox">
@@ -32,7 +32,7 @@
      <rect>
       <x>500</x>
       <y>10</y>
-      <width>200</width>
+      <width>210</width>
       <height>320</height>
      </rect>
     </property>
@@ -44,7 +44,7 @@
       <rect>
        <x>10</x>
        <y>30</y>
-       <width>181</width>
+       <width>191</width>
        <height>26</height>
       </rect>
      </property>
@@ -85,7 +85,7 @@
       <rect>
        <x>10</x>
        <y>60</y>
-       <width>183</width>
+       <width>191</width>
        <height>26</height>
       </rect>
      </property>
@@ -124,6 +124,22 @@
       </item>
      </layout>
     </widget>
+    <widget class="QProgressBar" name="progressBar">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>290</y>
+       <width>191</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="maximum">
+      <number>20</number>
+     </property>
+     <property name="value">
+      <number>0</number>
+     </property>
+    </widget>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -131,13 +147,97 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>720</width>
      <height>22</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <addaction name="actionApri"/>
+    <addaction name="actionSalva"/>
+    <addaction name="separator"/>
+    <addaction name="actionEsci"/>
+   </widget>
+   <widget class="QMenu" name="menu_Calcola">
+    <property name="title">
+     <string>&amp;Calcola</string>
+    </property>
+    <addaction name="actionIntegrale"/>
+    <addaction name="actionRidotto"/>
+    <addaction name="actionBiridotto"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menu_Calcola"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionApri">
+   <property name="text">
+    <string>&amp;Apri Sistema</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+A</string>
+   </property>
+  </action>
+  <action name="actionSalva">
+   <property name="text">
+    <string>&amp;Salva Sistema</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionEsci">
+   <property name="text">
+    <string>&amp;Esci</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+E</string>
+   </property>
+  </action>
+  <action name="actionIntegrale">
+   <property name="text">
+    <string>&amp;Integrale</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+I</string>
+   </property>
+  </action>
+  <action name="actionRidotto">
+   <property name="text">
+    <string>&amp;Ridotto</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
+   </property>
+  </action>
+  <action name="actionBiridotto">
+   <property name="text">
+    <string>&amp;Biridotto</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+B</string>
+   </property>
+  </action>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>actionEsci</sender>
+   <signal>triggered()</signal>
+   <receiver>QtSEnaMainWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

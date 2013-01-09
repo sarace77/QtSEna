@@ -1,8 +1,5 @@
 #include "numbersgrid.h"
 
-#define _NUM_OF_ITEMS 90
-#define _COL_SIZE 6
-
 #ifdef _DEBUG_FLAG_ENABLED
 #include <QDebug>
 #endif //_DEBUG_FLAG_ENABLED
@@ -20,26 +17,22 @@ NumbersGrid::NumbersGrid(QWidget *parent) :
         _signalMapper->setMapping(cbItem, cbItem->text().toInt());
         _grid.append(cbItem);
     }
-
-    connect(_signalMapper, SIGNAL(mapped(int)), this, SIGNAL(clicked(int)));
-
     for (quint8 i = 0; i < 9; i++) {
         for (quint8 j = 0; j < 10; j++) {
             _gridLayout->addWidget(_grid.at(10*i+j), i, j, 1, 1);
         }
     }
     setLayout(_gridLayout);
-
+    setAllValueChecked();
+    connect(_signalMapper, SIGNAL(mapped(int)), this, SIGNAL(clicked(int)));
 #ifdef _DEBUG_FLAG_ENABLED
     connect(this, SIGNAL(clicked(int)), this, SLOT(numberStateChanged(int)));
 #endif //_DEBUG_FLAG_ENABLED
-
-    setAllValueChecked();
 }
 
 NumbersGrid::~NumbersGrid() {
 #ifdef _DEBUG_FLAG_ENABLED
-    qDebug() << values2stringlist(getValuesList());
+    qDebug() << "[NUMBERSGRID] - ~NumbersGrid() - Valori:" << values2stringlist(getValuesList());
 #endif //_DEBUG_FLAG_ENABLED
     delete _gridLayout;
     delete _signalMapper;
@@ -78,7 +71,7 @@ ValuesList NumbersGrid::getValuesList() {
 
 #ifdef _DEBUG_FLAG_ENABLED
 void NumbersGrid::numberStateChanged(int value) {
-    qDebug() << "Columns: " << getSystemSize() << value << ": " << _grid.at(value - 1)->isChecked();
+    qDebug() << "[NUMBERSGRID] - numberStateChanged() - Colonne Sistema: " << getSystemSize() << value << ": " << _grid.at(value - 1)->isChecked();
 }
 #endif //_DEBUG_FLAG_ENABLED
 

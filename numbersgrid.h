@@ -1,14 +1,13 @@
 #ifndef NUMBERSGRID_H
 #define NUMBERSGRID_H
 
+#include "Defs.h"
+
 #include <QCheckBox>
 #include <QGridLayout>
 #include <QSignalMapper>
 #include <QWidget>
 
-//#define _DEBUG_FLAG_ENABLED
-
-typedef QList<quint8 > ValuesList;
 
 class NumbersGrid : public QWidget
 {

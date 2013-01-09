@@ -21,10 +21,12 @@ private:
 
 private slots:
     void update();
+    void on_actionIntegrale_triggered();
 
 public:
     explicit QtSEnaMainWindow(QWidget *parent = 0);
     ~QtSEnaMainWindow();
+
 
 };
 
