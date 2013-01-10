@@ -7,13 +7,13 @@
 class Colonna
 {
 private:
-    quint8 _colonna[_COL_SIZE];
+    quint8 _colonna[_NUMERO_ELEMENTI_COLONNA];
 
 public:
-    Colonna(quint8 values[_COL_SIZE]);
+    Colonna(quint8 valori[_NUMERO_ELEMENTI_COLONNA]);
 
-    quint16 getSum();
-    QStringList view();
+    quint16 somma();
+    QStringList stampa();
 };
 
 #endif // COLONNA_H

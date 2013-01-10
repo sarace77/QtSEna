@@ -1,16 +1,16 @@
 SOURCES += \
     main.cpp \
     qtsenamainwindow.cpp \
-    numbersgrid.cpp \
     sistema.cpp \
-    colonna.cpp
+    colonna.cpp \
+    griglianumeri.cpp
 
 HEADERS += \
     qtsenamainwindow.h \
-    numbersgrid.h \
     sistema.h \
     Defs.h \
-    colonna.h
+    colonna.h \
+    griglianumeri.h
 
 FORMS += \
     qtsenamainwindow.ui

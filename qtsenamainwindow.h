@@ -9,7 +9,7 @@
 #include <QMainWindow>
 #include <QProgressDialog>
 
-#include "numbersgrid.h"
+#include "griglianumeri.h"
 #include "sistema.h"
 
 namespace Ui {
@@ -22,7 +22,7 @@ class QtSEnaMainWindow : public QMainWindow
     
 private:
     Ui::QtSEnaMainWindow *ui;
-    NumbersGrid *numbersGridWidget;
+    GrigliaNumeri *numbersGridWidget;
     QHBoxLayout *numbersGridLayout;
 
     QFutureWatcher<bool> watcher;

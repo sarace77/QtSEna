@@ -8,16 +8,16 @@ class Sistema
 {
 private:
     ValuesList _sistemaNonCondizionato;
-    quint8 index[_COL_SIZE];
-    bool _hasColonna;
+    quint8 _indici[_NUMERO_ELEMENTI_COLONNA];
+    bool _ciSonoColonne;
 
 private:
-    bool updateIndex();
+    bool aggiornaIndici();
 
 public:
     Sistema(ValuesList values = ValuesList());
-    Colonna getColonna();
-    bool hasColonna();
+    Colonna prossimaColonna();
+    bool ciSonoColonne();
 };
 
 #endif // SISTEMA_H

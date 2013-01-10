@@ -4,30 +4,30 @@
 #include <QDebug>
 #endif //_DEBUG_FLAG_ENABLED
 
-Colonna::Colonna(quint8 values[_COL_SIZE]) {
-    for(quint8 i = 0; i < _COL_SIZE; i++) {
-        if (values == NULL) {
+Colonna::Colonna(quint8 valori[_NUMERO_ELEMENTI_COLONNA]) {
+    for(quint8 i = 0; i < _NUMERO_ELEMENTI_COLONNA; i++) {
+        if (valori == NULL) {
             _colonna[i] = 0;
     #ifdef _DEBUG_FLAG_ENABLED
-            qWarning() << "[COLONNA] - Colonna() - Invalid Pointer";
+            qWarning() << "[COLONNA] - Colonna() - Puntatore non valido";
     #endif //_DEBUG_FLAG_ENABLED
         } else {
-            _colonna[i] = values[i];
+            _colonna[i] = valori[i];
         }
     }
 }
 
-quint16 Colonna::getSum() {
-    quint16 res = 0;
-    for (int i = 0; i < _COL_SIZE; i++) {
-        res += _colonna[i];
+quint16 Colonna::somma() {
+    quint16 risultato = 0;
+    for (int i = 0; i < _NUMERO_ELEMENTI_COLONNA; i++) {
+        risultato += _colonna[i];
     }
-    return res;
+    return risultato;
 }
 
-QStringList Colonna::view() {
-    QStringList result;
-    for (quint8 i = 0; i < _COL_SIZE; i++)
-        result << QString("%1").arg(_colonna[i]);
-    return result;
+QStringList Colonna::stampa() {
+    QStringList risultato;
+    for (quint8 i = 0; i < _NUMERO_ELEMENTI_COLONNA; i++)
+        risultato << QString("%1").arg(_colonna[i]);
+    return risultato;
 }

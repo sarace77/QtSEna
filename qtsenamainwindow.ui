@@ -152,8 +152,21 @@
     <addaction name="actionRidotto"/>
     <addaction name="actionBiridotto"/>
    </widget>
+   <widget class="QMenu" name="menuImpostazioni">
+    <property name="title">
+     <string>&amp;Impostazioni</string>
+    </property>
+    <addaction name="action_Preferenze"/>
+   </widget>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>&amp;?</string>
+    </property>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menu_Calcola"/>
+   <addaction name="menuImpostazioni"/>
+   <addaction name="menu"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionApri">
@@ -202,6 +215,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+B</string>
+   </property>
+  </action>
+  <action name="action_Preferenze">
+   <property name="text">
+    <string>&amp;Preferenze</string>
    </property>
   </action>
  </widget>
