@@ -1,62 +1,90 @@
 #include "qtsenamainwindow.h"
+#include "sistema.h"
 #include "ui_qtsenamainwindow.h"
 
-#include "sistema.h"
 #include <QTime>
+#include <QDialog>
+#include <QMessageBox>
+
+#define _DEBUG_FLAG_ENABLED
 
 #ifdef _DEBUG_FLAG_ENABLED
 #include <QDebug>
 #endif //_DEBUG_FLAG_ENABLED
 
+
+bool columnEngine(Sistema *sistema, quint16 min, quint16 max, QList<Colonna> *list) {
+    quint32 count = 0, valid = 0;
+    bool outOfMemory = false;
+    while (sistema->hasColonna() && !outOfMemory) {
+        Colonna colonna = sistema->getColonna();
+        ++count;
+        if (colonna.getSum() >= min && colonna.getSum() <= max) {
+            ++valid;
+            list->append(colonna);
+        }
+        outOfMemory = (list->size() >= _MAX_COL);
+    }
+    return outOfMemory;
+}
+
 QtSEnaMainWindow::QtSEnaMainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::QtSEnaMainWindow)
 {
+    _colList = NULL;
     ui->setupUi(this);
     numbersGridLayout = new QHBoxLayout(ui->numbersGridBox);
     numbersGridWidget = new NumbersGrid();
     numbersGridLayout->addWidget(numbersGridWidget);
-    ui->progressBar->setVisible(false);
+    progressDialog = new QProgressDialog();
 
     connect(numbersGridWidget, SIGNAL(clicked(int)), this, SLOT(update()));
+    connect(&watcher, SIGNAL(finished()), progressDialog, SLOT(cancel()));
 }
 
 QtSEnaMainWindow::~QtSEnaMainWindow()
 {
     delete ui;
+    delete numbersGridWidget;
+    delete numbersGridLayout;
+    delete progressDialog;
 }
 
 void QtSEnaMainWindow::on_actionIntegrale_triggered() {
-    Sistema integrale(numbersGridWidget->getValuesList());
-    quint32 count = 0, part_count = 0, valid = 0;
+    _sistema = new Sistema(numbersGridWidget->getValuesList());
     QTime timer;
     timer.start();
-    ui->progressBar->setMaximum(numbersGridWidget->getSystemSize()/100);
-    ui->progressBar->setValue(0);
-    ui->progressBar->setVisible(true);
-    while (integrale.hasColonna()) {
-        Colonna colonna = integrale.getColonna();
-            if (colonna.isValid() && colonna.getSum() >= ui->minSum->value() && colonna.getSum() <= ui->maxSum->value()) {
-                ++valid;
-#ifdef _DEBUG_FLAG_ENABLED
-                qDebug() << colonna.view();
-#endif //_DEBUG_FLAG_ENABLED
-            }
-            if (++count / 100 > part_count) {
-                ui->progressBar->setValue(++part_count);
-            }
+
+    if (_colList != NULL)
+        delete _colList;
+    _colList = new QList<Colonna>();
+    future = QtConcurrent::run(columnEngine, _sistema, ui->minSum->value(), ui->maxSum->value(), _colList);
+    watcher.setFuture(future);
+
+    progressDialog->setWindowTitle("Computazione combinazioni valide...");
+    progressDialog->setLabelText(QString("Elaborazione %1 colonne in corso...").arg(numbersGridWidget->getSystemSize()));
+    progressDialog->setMinimum(0);
+    progressDialog->setMaximum(0);
+    progressDialog->setWindowModality(Qt::WindowModal);
+    progressDialog->exec();
+
+    if (future.result()) {
+        QMessageBox msgBox;
+        msgBox.setWindowTitle("Errore condizionamento!");
+        msgBox.setText("Computate solo le prime 50 milioni di combinazioni valide");
+        msgBox.exec();
     }
-    QString sMessage = QString("Elaborate %1 colonne su %2 in").arg(--count).arg(numbersGridWidget->getSystemSize());
+
     quint32 hh, mm, ss, ee;
     hh = timer.elapsed()/3600000;
     mm = (timer.elapsed() - hh *3600000) /60000;
     ss = (timer.elapsed() - hh * 3600000 - mm * 60000) /1000;
     ee = timer.elapsed() - hh * 3600000 - mm * 60000 - ss * 1000;
-    sMessage += QString(" %1h %2m %3s.%4").arg(hh).arg(mm).arg(ss).arg(ee);
-    if (valid != count)
-        sMessage += QString(", %1 Colonne valide (%2\%)").arg(valid).arg((float)(10000 * valid/count)/100);
+
+    QString sMessage = QString("%1 Colonne elaborate in %2h %3m %4s.%5").arg(numbersGridWidget->getSystemSize()).arg(hh).arg(mm).arg(ss).arg(ee);
+    sMessage += QString(", %1 selezionate (%2\%)").arg(_colList->count()).arg(((float)10000 * _colList->count())/numbersGridWidget->getSystemSize()/100);
     ui->statusbar->showMessage(sMessage);
-    ui->progressBar->setVisible(false);
 }
 
 void QtSEnaMainWindow::update() {
@@ -79,5 +107,4 @@ void QtSEnaMainWindow::update() {
         sNumCol = QString("Numero di valori selezionati insufficiente");
     }
     ui->statusbar->showMessage(sNumCol);
-
 }

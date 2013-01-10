@@ -5,6 +5,10 @@
 
 #include <QList>
 
+#ifndef _MAX_COL
+#define _MAX_COL 50000000
+#endif //_MAX_COL
+
 #ifndef _NUM_OF_ITEMS
 #define _NUM_OF_ITEMS 90
 #endif //_NUM_OF_ITEMS

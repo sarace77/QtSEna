@@ -15,7 +15,7 @@ Sistema::Sistema(ValuesList values) {
     } else {
         _sistemaNonCondizionato = values;
     }
-    for (int i = 0; i < _COL_SIZE; i++) {
+    for (quint8 i = 0; i < _COL_SIZE; i++) {
         index[i] = i;
     }
     _hasColonna = true;
@@ -23,7 +23,7 @@ Sistema::Sistema(ValuesList values) {
 
 Colonna Sistema::getColonna() {
     quint8 res[_COL_SIZE];
-    for (int i = 0; i < _COL_SIZE; i++) {
+    for (quint8 i = 0; i < _COL_SIZE; i++) {
         res[i] = _sistemaNonCondizionato.at(index[i]);
     }
     if(!updateIndex()) {

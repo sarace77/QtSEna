@@ -7,22 +7,17 @@
 NumbersGrid::NumbersGrid(QWidget *parent) :
     QWidget(parent)
 {
-    setStyleSheet("QWidget {background-color:#fff;}");
     _gridLayout = new QGridLayout(this);
     _signalMapper = new QSignalMapper(this);
+    setStyleSheet("QWidget {background-color:#fff;}");
     for (quint8 i = 0; i < _NUM_OF_ITEMS; i++) {
         QCheckBox *cbItem = new QCheckBox();
         cbItem->setText(QString("%1").arg(i+1));
         connect(cbItem, SIGNAL(stateChanged(int)), _signalMapper, SLOT(map()));
         _signalMapper->setMapping(cbItem, cbItem->text().toInt());
         _grid.append(cbItem);
+        _gridLayout->addWidget(_grid.at(i), i/10, i - (i/10)*10, 1, 1);
     }
-    for (quint8 i = 0; i < 9; i++) {
-        for (quint8 j = 0; j < 10; j++) {
-            _gridLayout->addWidget(_grid.at(10*i+j), i, j, 1, 1);
-        }
-    }
-    setLayout(_gridLayout);
     setAllValueChecked();
     connect(_signalMapper, SIGNAL(mapped(int)), this, SIGNAL(clicked(int)));
 #ifdef _DEBUG_FLAG_ENABLED
@@ -61,7 +56,6 @@ quint32 NumbersGrid::getSystemSize() {
 
 ValuesList NumbersGrid::getValuesList() {
     ValuesList result;
-    result.clear();
     for (quint8 i = 0; i < _NUM_OF_ITEMS; i++) {
         if (_grid.at(i)->isChecked())
             result << (i + 1);
@@ -98,7 +92,6 @@ void NumbersGrid::setValueUnchecked(quint8 value) {
 
 QStringList NumbersGrid::values2stringlist(ValuesList values) {
     QStringList result;
-    result.clear();
     for (int i = 0; i < values.size(); i++) {
         result << QString("%1").arg(values.at(i));
     }

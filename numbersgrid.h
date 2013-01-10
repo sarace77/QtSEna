@@ -26,6 +26,7 @@ private slots:
 public:
     explicit NumbersGrid(QWidget *parent = 0);
     ~NumbersGrid();
+
     quint8 getNumOfItems();
     quint32 getSystemSize();
     ValuesList getValuesList();

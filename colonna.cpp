@@ -5,7 +5,7 @@
 #endif //_DEBUG_FLAG_ENABLED
 
 Colonna::Colonna(quint8 values[_COL_SIZE]) {
-    for(int i = 0; i < _COL_SIZE; i++) {
+    for(quint8 i = 0; i < _COL_SIZE; i++) {
         if (values == NULL) {
             _colonna[i] = 0;
     #ifdef _DEBUG_FLAG_ENABLED
@@ -25,13 +25,9 @@ quint16 Colonna::getSum() {
     return res;
 }
 
-bool Colonna::isValid() {
-    return (getSum() > 0);
-}
-
 QStringList Colonna::view() {
     QStringList result;
-    for (int i = 0; i < _COL_SIZE; i++)
+    for (quint8 i = 0; i < _COL_SIZE; i++)
         result << QString("%1").arg(_colonna[i]);
     return result;
 }

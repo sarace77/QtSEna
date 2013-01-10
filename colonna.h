@@ -8,11 +8,11 @@ class Colonna
 {
 private:
     quint8 _colonna[_COL_SIZE];
+
 public:
     Colonna(quint8 values[_COL_SIZE]);
 
     quint16 getSum();
-    bool isValid();
     QStringList view();
 };
 
