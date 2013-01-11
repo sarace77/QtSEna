@@ -5,6 +5,7 @@
 #include <QFutureWatcher>
 #include <QtConcurrentRun>
 
+#include <QCheckBox>
 #include <QHBoxLayout>
 #include <QMainWindow>
 #include <QProgressDialog>
@@ -22,8 +23,11 @@ class QtSEnaMainWindow : public QMainWindow
     
 private:
     Ui::QtSEnaMainWindow *ui;
-    GrigliaNumeri *numbersGridWidget;
-    QHBoxLayout *numbersGridLayout;
+    GrigliaNumeri *_grigliaNumeri;
+    QHBoxLayout *_layoutConsecutivi, *_layoutGemelli, *_layoutGrigliaNumeri, *_layoutPari;
+
+    QList<QCheckBox *> _consecutivi, _gemelli, _pari;
+
 
     QFutureWatcher<bool> watcher;
     QFuture<bool> future;
@@ -33,7 +37,7 @@ private:
     QList<Colonna > *_colList;
 
 private slots:
-    void update();
+    void aggiorna();
     void on_actionIntegrale_triggered();
 
 public:

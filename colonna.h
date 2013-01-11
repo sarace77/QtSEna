@@ -12,6 +12,10 @@ private:
 public:
     Colonna(quint8 valori[_NUMERO_ELEMENTI_COLONNA]);
 
+    quint8 consecutivi();
+    quint8 dispari();
+    quint8 gemelli();
+    quint8 pari();
     quint16 somma();
     QStringList stampa();
 };
