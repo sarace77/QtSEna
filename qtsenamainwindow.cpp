@@ -3,12 +3,15 @@
 #include "ui_qtsenamainwindow.h"
 
 #include <QDialog>
+#include <QFile>
 #include <QMessageBox>
 #include <QTime>
+#include <QXmlStreamReader>
+#include <QXmlStreamWriter>
 
-#ifdef _DEBUG_FLAG_ENABLED
+//#ifdef _DEBUG_FLAG_ENABLED
 #include <QDebug>
-#endif //_DEBUG_FLAG_ENABLED
+//#endif //_DEBUG_FLAG_ENABLED
 
 typedef struct _Condizionamento {
     quint16 min, max;
@@ -44,6 +47,7 @@ bool columnEngine(QList<Colonna> *list, Sistema *sistema, Condizionamento condiz
 
 QtSEnaMainWindow::QtSEnaMainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::QtSEnaMainWindow) {
     _colList = NULL;
+    _sistema = NULL;
     ui->setupUi(this);
     _layoutConsecutivi = new QHBoxLayout(ui->consecutiviBox);
     _layoutGemelli = new QHBoxLayout(ui->gemelliBox);
@@ -69,15 +73,14 @@ QtSEnaMainWindow::QtSEnaMainWindow(QWidget *parent) : QMainWindow(parent), ui(ne
     _grigliaNumeri= new GrigliaNumeri();
     _layoutGrigliaNumeri->addWidget(_grigliaNumeri);
     progressDialog = new QProgressDialog();
-    ui->actionApri->setEnabled(false);
     ui->actionBiridotto->setEnabled(false);
     ui->actionPreferenze->setEnabled(false);
     ui->actionRidotto->setEnabled(false);
-    ui->actionSalva->setEnabled(false);
     ui->risultatoLabel->setVisible(false);
     connect(_grigliaNumeri, SIGNAL(aggiornato(int)), this, SLOT(aggiorna()));
     connect(&watcher, SIGNAL(finished()), progressDialog, SLOT(cancel()));
     aggiorna();
+    _nomeFile = ".QtSEna.xml";
 }
 
 QtSEnaMainWindow::~QtSEnaMainWindow()
@@ -120,7 +123,63 @@ void QtSEnaMainWindow::aggiorna() {
     ui->colonneLabel->setText(QString("Colonne: ") + sColonneSistema);
 }
 
+void QtSEnaMainWindow::on_actionApri_triggered() {
+    QFile xmlFile(_nomeFile);
+    if(xmlFile.open(QIODevice::ReadOnly)) {
+        QXmlStreamReader xmlStream(&xmlFile);
+        while(!xmlStream.atEnd()) {
+            xmlStream.readNext();
+            if(xmlStream.isStartElement() && xmlStream.name().toAscii() == "Elementi") {
+                QStringList sElementi = QString(xmlStream.readElementText().toAscii()).split(QChar(','));
+                _grigliaNumeri->deselezionaTutti();
+                for (quint8 i = 0; i < sElementi.count(); i++) {
+                    _grigliaNumeri->selezionaValore(sElementi.at(i).toUShort() - 1);
+                }
+            }
+            if(xmlStream.isStartElement() && xmlStream.name().toAscii() == "Somma") {
+                ui->maxSum->setValue(xmlStream.attributes().value("max").toAscii().toInt());
+                ui->minSum->setValue(xmlStream.attributes().value("min").toAscii().toInt());
+            }
+            if(xmlStream.isStartElement() && xmlStream.name().toAscii() == "Consecutivi") {
+                QStringList sConsecutivi = QString(xmlStream.readElementText().toAscii()).split(QChar(','));
+                for (quint8 i = 0; i <= _NUMERO_ELEMENTI_COLONNA; i++)
+                    _consecutivi.at(i)->setChecked(false);
+                for (quint8 i = 0; i < sConsecutivi.count(); i++) {
+                    _consecutivi.at(sConsecutivi.at(i).toUShort())->setChecked(true);
+                }
+            }
+            if(xmlStream.isStartElement() && xmlStream.name().toAscii() == "Gemelli") {
+                QStringList sGemelli = QString(xmlStream.readElementText().toAscii()).split(QChar(','));
+                for (quint8 i = 0; i <= _NUMERO_ELEMENTI_COLONNA; i++)
+                    _gemelli.at(i)->setChecked(false);
+                for (quint8 i = 0; i < sGemelli.count(); i++) {
+                    _gemelli.at(sGemelli.at(i).toUShort())->setChecked(true);
+                }
+            }
+            if(xmlStream.isStartElement() && xmlStream.name().toAscii() == "Pari") {
+                QStringList sPari = QString(xmlStream.readElementText().toAscii()).split(QChar(','));
+                for (quint8 i = 0; i <= _NUMERO_ELEMENTI_COLONNA; i++)
+                    _pari.at(i)->setChecked(false);
+                for (quint8 i = 0; i < sPari.count(); i++) {
+                    _pari.at(sPari.at(i).toUShort())->setChecked(true);
+                }
+            }
+        }
+        xmlFile.close();
+#ifdef _DEBUG_FLAG_ENABLED
+        if (xmlStream.hasError()){
+            qWarning() << "[QTSENAMAINWINDOW] - on_actionApri_triggered() - Errore: " << xmlStream.errorString();
+        }
+    } else {
+        qWarning() << "[QTSENAMAINWINDOW] - on_actionApri_triggered() - Impossibile leggere dal file " << _nomeFile;
+#endif //_DEBUG_FLAG_ENABLED
+    }
+
+}
+
 void QtSEnaMainWindow::on_actionIntegrale_triggered() {
+    if(_sistema != NULL)
+        delete _sistema;
     _sistema = new Sistema(_grigliaNumeri->listaElementi());
     QTime timer;
     timer.start();
@@ -168,3 +227,52 @@ void QtSEnaMainWindow::on_actionIntegrale_triggered() {
     ui->risultatoLabel->setText(sLabel);
 }
 
+void QtSEnaMainWindow::on_actionSalva_triggered() {
+    QFile xmlFile(_nomeFile);
+    if(xmlFile.open(QIODevice::WriteOnly)) {
+        QXmlStreamWriter xmlStream(&xmlFile);
+        xmlStream.setAutoFormatting(true);
+        xmlStream.writeStartDocument();
+        xmlStream.writeStartElement("Sistema");
+        QString sElementi = "";
+        for(quint8 i = 0; i < _grigliaNumeri->listaElementi().count(); i++) {
+            sElementi.append(QString("%1,").arg(_grigliaNumeri->listaElementi().at(i)));
+        }
+        sElementi.chop(1);
+        xmlStream.writeTextElement("Elementi", sElementi);
+        xmlStream.writeStartElement("Condizionamento");
+        xmlStream.writeStartElement("Somma");
+        xmlStream.writeAttribute("max", QString("%1").arg(ui->maxSum->value()));
+        xmlStream.writeAttribute("min", QString("%1").arg(ui->minSum->value()));
+        xmlStream.writeEndElement(); // Somma
+        QString sConsecutivi = "";
+        for (quint8 i = 0; i <= _NUMERO_ELEMENTI_COLONNA; i++) {
+            if(_consecutivi.at(i)->isChecked())
+                sConsecutivi += QString("%1,").arg(i);
+        }
+        sConsecutivi.chop(1);
+        xmlStream.writeTextElement("Consecutivi", sConsecutivi);
+        QString sGemelli = "";
+        for (quint8 i = 0; i <= _NUMERO_ELEMENTI_COLONNA; i++) {
+            if(_gemelli.at(i)->isChecked())
+                sGemelli += QString("%1,").arg(i);
+        }
+        sGemelli.chop(1);
+        xmlStream.writeTextElement("Gemelli", sGemelli);
+        QString sPari = "";
+        for (quint8 i = 0; i <= _NUMERO_ELEMENTI_COLONNA; i++) {
+            if(_pari.at(i)->isChecked())
+                sPari += QString("%1,").arg(i);
+        }
+        sPari.chop(1);
+        xmlStream.writeTextElement("Pari", sPari);
+        xmlStream.writeEndElement(); // Condizionamento
+        xmlStream.writeEndElement(); // Sistema
+        xmlStream.writeEndDocument();
+        xmlFile.close();
+#ifdef _DEBUG_FLAG_ENABLED
+    } else {
+        qWarning() << "[QTSENAMAINWINDOW] - on_actionSave_triggered() - Impossibile scrivere sul file " << _nomeFile;
+#endif //_DEBUG_FLAG_ENABLED
+    }
+}

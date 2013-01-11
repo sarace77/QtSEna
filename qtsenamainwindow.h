@@ -28,7 +28,6 @@ private:
 
     QList<QCheckBox *> _consecutivi, _gemelli, _pari;
 
-
     QFutureWatcher<bool> watcher;
     QFuture<bool> future;
     QProgressDialog *progressDialog;
@@ -36,9 +35,13 @@ private:
     Sistema *_sistema;
     QList<Colonna > *_colList;
 
+    QString _nomeFile;
+
 private slots:
     void aggiorna();
+    void on_actionApri_triggered();
     void on_actionIntegrale_triggered();
+    void on_actionSalva_triggered();
 
 public:
     explicit QtSEnaMainWindow(QWidget *parent = 0);
