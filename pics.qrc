@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>pics/apri.png</file>
+        <file>pics/calcola.png</file>
+        <file>pics/cancella.png</file>
+        <file>pics/esci.png</file>
+        <file>pics/esegui.png</file>
+        <file>pics/preferenze.png</file>
+        <file>pics/salva.png</file>
+        <file>pics/stampa.png</file>
+        <file>pics/superenelotto.jpg</file>
+    </qresource>
+</RCC>

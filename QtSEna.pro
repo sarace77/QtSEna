@@ -14,3 +14,6 @@ HEADERS += \
 
 FORMS += \
     qtsenamainwindow.ui
+
+RESOURCES += \
+    pics.qrc

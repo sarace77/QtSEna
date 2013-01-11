@@ -7,11 +7,15 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>420</height>
+    <height>440</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Qt SuperEnalotto</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="pics.qrc">
+    <normaloff>:/icons/pics/superenelotto.jpg</normaloff>:/icons/pics/superenelotto.jpg</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QGroupBox" name="numbersGridBox">
@@ -285,6 +289,10 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionApri">
+   <property name="icon">
+    <iconset resource="pics.qrc">
+     <normaloff>:/icons/pics/apri.png</normaloff>:/icons/pics/apri.png</iconset>
+   </property>
    <property name="text">
     <string>&amp;Apri Sistema</string>
    </property>
@@ -293,6 +301,10 @@
    </property>
   </action>
   <action name="actionSalva">
+   <property name="icon">
+    <iconset resource="pics.qrc">
+     <normaloff>:/icons/pics/salva.png</normaloff>:/icons/pics/salva.png</iconset>
+   </property>
    <property name="text">
     <string>&amp;Salva Sistema</string>
    </property>
@@ -301,6 +313,10 @@
    </property>
   </action>
   <action name="actionEsci">
+   <property name="icon">
+    <iconset resource="pics.qrc">
+     <normaloff>:/icons/pics/esci.png</normaloff>:/icons/pics/esci.png</iconset>
+   </property>
    <property name="text">
     <string>&amp;Esci</string>
    </property>
@@ -320,11 +336,19 @@
    </property>
   </action>
   <action name="actionPreferenze">
+   <property name="icon">
+    <iconset resource="pics.qrc">
+     <normaloff>:/icons/pics/preferenze.png</normaloff>:/icons/pics/preferenze.png</iconset>
+   </property>
    <property name="text">
     <string>&amp;Preferenze</string>
    </property>
   </action>
   <action name="actionSistema">
+   <property name="icon">
+    <iconset resource="pics.qrc">
+     <normaloff>:/icons/pics/esegui.png</normaloff>:/icons/pics/esegui.png</iconset>
+   </property>
    <property name="text">
     <string>&amp;Calcola Sistema</string>
    </property>
@@ -366,7 +390,9 @@
    </property>
   </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="pics.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>actionEsci</sender>

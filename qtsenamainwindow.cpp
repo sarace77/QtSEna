@@ -105,6 +105,9 @@ QtSEnaMainWindow::QtSEnaMainWindow(QWidget *parent) : QMainWindow(parent), ui(ne
     ui->actionPreferenze->setEnabled(false);
 
     addToolBar(_toolBar);
+    _toolBar->addAction(ui->actionApri);
+    _toolBar->addAction(ui->actionSalva);
+    _toolBar->addSeparator();
     _toolBar->addAction(ui->actionSistema);
     _toolBar->addSeparator();
     _toolBar->addWidget(_integrale);
