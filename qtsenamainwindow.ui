@@ -244,7 +244,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -260,9 +260,12 @@
     <property name="title">
      <string>&amp;Calcola</string>
     </property>
+    <addaction name="actionSistema"/>
+    <addaction name="separator"/>
     <addaction name="actionIntegrale"/>
-    <addaction name="actionRidotto"/>
-    <addaction name="actionBiridotto"/>
+    <addaction name="actionG5"/>
+    <addaction name="actionG4"/>
+    <addaction name="actionG3"/>
    </widget>
    <widget class="QMenu" name="menuImpostazioni">
     <property name="title">
@@ -306,6 +309,9 @@
    </property>
   </action>
   <action name="actionIntegrale">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>&amp;Integrale</string>
    </property>
@@ -313,25 +319,50 @@
     <string>Ctrl+I</string>
    </property>
   </action>
-  <action name="actionRidotto">
-   <property name="text">
-    <string>&amp;Ridotto</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+R</string>
-   </property>
-  </action>
-  <action name="actionBiridotto">
-   <property name="text">
-    <string>&amp;Biridotto</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+B</string>
-   </property>
-  </action>
   <action name="actionPreferenze">
    <property name="text">
     <string>&amp;Preferenze</string>
+   </property>
+  </action>
+  <action name="actionSistema">
+   <property name="text">
+    <string>&amp;Calcola Sistema</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
+   </property>
+  </action>
+  <action name="actionG5">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>G&amp;5</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+5</string>
+   </property>
+  </action>
+  <action name="actionG4">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>G&amp;4</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+4</string>
+   </property>
+  </action>
+  <action name="actionG3">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>G&amp;3</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+3</string>
    </property>
   </action>
  </widget>

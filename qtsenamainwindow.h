@@ -6,9 +6,12 @@
 #include <QtConcurrentRun>
 
 #include <QCheckBox>
+#include <QFileDialog>
 #include <QHBoxLayout>
 #include <QMainWindow>
 #include <QProgressDialog>
+#include <QRadioButton>
+#include <QToolBar>
 
 #include "griglianumeri.h"
 #include "sistema.h"
@@ -24,24 +27,29 @@ class QtSEnaMainWindow : public QMainWindow
 private:
     Ui::QtSEnaMainWindow *ui;
     GrigliaNumeri *_grigliaNumeri;
+    QFileDialog *_apriFile, *_salvaFile;
     QHBoxLayout *_layoutConsecutivi, *_layoutGemelli, *_layoutGrigliaNumeri, *_layoutPari;
 
     QList<QCheckBox *> _consecutivi, _gemelli, _pari;
 
     QFutureWatcher<bool> watcher;
     QFuture<bool> future;
-    QProgressDialog *progressDialog;
+    QProgressDialog *_progressDialog;
+    QRadioButton *_integrale, *_g3, *_g4, *_g5;
+    QToolBar *_toolBar;
 
     Sistema *_sistema;
     QList<Colonna > *_colList;
 
-    QString _nomeFile;
-
 private slots:
     void aggiorna();
-    void on_actionApri_triggered();
-    void on_actionIntegrale_triggered();
-    void on_actionSalva_triggered();
+    void apri();
+    void on_actionG3_activated();
+    void on_actionG4_activated();
+    void on_actionG5_activated();
+    void on_actionIntegrale_activated();
+    void on_actionSistema_triggered();
+    void salva();
 
 public:
     explicit QtSEnaMainWindow(QWidget *parent = 0);

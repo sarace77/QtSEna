@@ -9,9 +9,9 @@
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
 
-//#ifdef _DEBUG_FLAG_ENABLED
+#ifdef _DEBUG_FLAG_ENABLED
 #include <QDebug>
-//#endif //_DEBUG_FLAG_ENABLED
+#endif //_DEBUG_FLAG_ENABLED
 
 typedef struct _Condizionamento {
     quint16 min, max;
@@ -48,11 +48,22 @@ bool columnEngine(QList<Colonna> *list, Sistema *sistema, Condizionamento condiz
 QtSEnaMainWindow::QtSEnaMainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::QtSEnaMainWindow) {
     _colList = NULL;
     _sistema = NULL;
+
     ui->setupUi(this);
+    _apriFile = new QFileDialog(this);
+    _g3 = new QRadioButton(this);
+    _g4 = new QRadioButton(this);
+    _g5 = new QRadioButton(this);
+    _grigliaNumeri= new GrigliaNumeri(this);
+    _integrale = new QRadioButton(this);
     _layoutConsecutivi = new QHBoxLayout(ui->consecutiviBox);
     _layoutGemelli = new QHBoxLayout(ui->gemelliBox);
     _layoutGrigliaNumeri= new QHBoxLayout(ui->numbersGridBox);
     _layoutPari = new QHBoxLayout(ui->pariBox);
+    _progressDialog = new QProgressDialog();
+    _salvaFile = new QFileDialog(this);
+    _toolBar = new QToolBar(this);
+
     for (quint8 i = 0; i <= _NUMERO_ELEMENTI_COLONNA; i++) {
         QCheckBox *elementoPari = new QCheckBox();
         QCheckBox *elementoConsecutivi = new QCheckBox();
@@ -70,17 +81,48 @@ QtSEnaMainWindow::QtSEnaMainWindow(QWidget *parent) : QMainWindow(parent), ui(ne
         _layoutGemelli->addWidget(_gemelli.at(i));
         _layoutPari->addWidget(_pari.at(i));
     }
-    _grigliaNumeri= new GrigliaNumeri();
+
+    QStringList sFileFilters;
+    sFileFilters << "Sistemi QtSEna (*.sen *.SEN)";
+    _apriFile->setWindowTitle("Apri Sistema Salvato");
+    _apriFile->setNameFilters(sFileFilters);
+    _g3->setText("G3");
+    _g3->setEnabled(false);
+    _g4->setText("G4");
+    _g4->setEnabled(false);
+    _g5->setText("G5");
+    _g5->setEnabled(false);
+    _integrale->setChecked(true);
+    _integrale->setText("Integrale");
     _layoutGrigliaNumeri->addWidget(_grigliaNumeri);
-    progressDialog = new QProgressDialog();
-    ui->actionBiridotto->setEnabled(false);
+    _salvaFile->setWindowTitle("Salva Sistema Corrente");
+    _salvaFile->setNameFilters(sFileFilters);
+    _salvaFile->setAcceptMode(QFileDialog::AcceptSave);
+    ui->actionG3->setEnabled(false);
+    ui->actionG4->setEnabled(false);
+    ui->actionG5->setEnabled(false);
+    ui->actionIntegrale->setChecked(true);
     ui->actionPreferenze->setEnabled(false);
-    ui->actionRidotto->setEnabled(false);
-    ui->risultatoLabel->setVisible(false);
+
+    addToolBar(_toolBar);
+    _toolBar->addAction(ui->actionSistema);
+    _toolBar->addSeparator();
+    _toolBar->addWidget(_integrale);
+    _toolBar->addWidget(_g5);
+    _toolBar->addWidget(_g4);
+    _toolBar->addWidget(_g3);
+
     connect(_grigliaNumeri, SIGNAL(aggiornato(int)), this, SLOT(aggiorna()));
-    connect(&watcher, SIGNAL(finished()), progressDialog, SLOT(cancel()));
+    connect(&watcher, SIGNAL(finished()), _progressDialog, SLOT(cancel()));
+    connect(ui->actionApri, SIGNAL(triggered()), _apriFile, SLOT(exec()));
+    connect(ui->actionSalva, SIGNAL(triggered()), _salvaFile, SLOT(exec()));
+    connect(_apriFile, SIGNAL(accepted()), this, SLOT(apri()));
+    connect(_salvaFile, SIGNAL(accepted()), this, SLOT(salva()));
+    connect(_g3, SIGNAL(clicked()), this, SLOT(on_actionG3_activated()));
+    connect(_g4, SIGNAL(clicked()), this, SLOT(on_actionG4_activated()));
+    connect(_g5, SIGNAL(clicked()), this, SLOT(on_actionG5_activated()));
+    connect(_integrale, SIGNAL(clicked()), this, SLOT(on_actionIntegrale_activated()));
     aggiorna();
-    _nomeFile = ".QtSEna.xml";
 }
 
 QtSEnaMainWindow::~QtSEnaMainWindow()
@@ -91,11 +133,14 @@ QtSEnaMainWindow::~QtSEnaMainWindow()
         delete _gemelli.at(i);
         delete _pari.at(i);
     }
+    delete _apriFile;
+    delete _grigliaNumeri;
     delete _layoutConsecutivi;
     delete _layoutGemelli;
     delete _layoutGrigliaNumeri;
     delete _layoutPari;
-    delete progressDialog;
+    delete _progressDialog;
+    delete _salvaFile;
 }
 
 void QtSEnaMainWindow::aggiorna() {
@@ -123,8 +168,8 @@ void QtSEnaMainWindow::aggiorna() {
     ui->colonneLabel->setText(QString("Colonne: ") + sColonneSistema);
 }
 
-void QtSEnaMainWindow::on_actionApri_triggered() {
-    QFile xmlFile(_nomeFile);
+void QtSEnaMainWindow::apri() {
+    QFile xmlFile(_apriFile->selectedFiles().at(0));
     if(xmlFile.open(QIODevice::ReadOnly)) {
         QXmlStreamReader xmlStream(&xmlFile);
         while(!xmlStream.atEnd()) {
@@ -174,10 +219,47 @@ void QtSEnaMainWindow::on_actionApri_triggered() {
         qWarning() << "[QTSENAMAINWINDOW] - on_actionApri_triggered() - Impossibile leggere dal file " << _nomeFile;
 #endif //_DEBUG_FLAG_ENABLED
     }
-
 }
 
-void QtSEnaMainWindow::on_actionIntegrale_triggered() {
+void QtSEnaMainWindow::on_actionG3_activated() {
+    if(!_g3->isChecked())
+        _g3->setChecked(true);
+    ui->actionG3->setChecked(true);
+    ui->actionG4->setChecked(false);
+    ui->actionG5->setChecked(false);
+    ui->actionIntegrale->setChecked(false);
+}
+
+void QtSEnaMainWindow::on_actionG4_activated() {
+    if(!_g4->isChecked())
+        _g4->setChecked(true);
+    ui->actionG3->setChecked(false);
+    ui->actionG4->setChecked(true);
+    ui->actionG5->setChecked(false);
+    ui->actionIntegrale->setChecked(false);
+}
+
+void QtSEnaMainWindow::on_actionG5_activated() {
+    if(!_g5->isChecked())
+        _g5->setChecked(true);
+    ui->actionG3->setChecked(false);
+    ui->actionG4->setChecked(false);
+    ui->actionG5->setChecked(true);
+    ui->actionIntegrale->setChecked(false);
+}
+
+void QtSEnaMainWindow::on_actionIntegrale_activated() {
+    if(!_integrale->isChecked())
+        _integrale->setChecked(true);
+    ui->actionG3->setChecked(false);
+    ui->actionG4->setChecked(false);
+    ui->actionG5->setChecked(false);
+    ui->actionIntegrale->setChecked(true);
+}
+
+
+
+void QtSEnaMainWindow::on_actionSistema_triggered() {
     if(_sistema != NULL)
         delete _sistema;
     _sistema = new Sistema(_grigliaNumeri->listaElementi());
@@ -199,12 +281,12 @@ void QtSEnaMainWindow::on_actionIntegrale_triggered() {
     future = QtConcurrent::run(columnEngine, _colList, _sistema, condizionamento);//, listaPari);
     watcher.setFuture(future);
 
-    progressDialog->setWindowTitle("Computazione combinazioni valide...");
-    progressDialog->setLabelText(QString("Elaborazione %1 colonne in corso...").arg(_grigliaNumeri->numeroColonneSistema()));
-    progressDialog->setMinimum(0);
-    progressDialog->setMaximum(0);
-    progressDialog->setWindowModality(Qt::WindowModal);
-    progressDialog->exec();
+    _progressDialog->setWindowTitle("Computazione combinazioni valide...");
+    _progressDialog->setLabelText(QString("Elaborazione %1 colonne in corso...").arg(_grigliaNumeri->numeroColonneSistema()));
+    _progressDialog->setMinimum(0);
+    _progressDialog->setMaximum(0);
+    _progressDialog->setWindowModality(Qt::WindowModal);
+    _progressDialog->exec();
 
     if (future.result()) {
         QMessageBox msgBox;
@@ -220,15 +302,13 @@ void QtSEnaMainWindow::on_actionIntegrale_triggered() {
     ee = timer.elapsed() - hh * 3600000 - mm * 60000 - ss * 1000;
 
     QString sMessage = QString("%1 Colonne elaborate in %2h %3m %4s.%5").arg(_grigliaNumeri->numeroColonneSistema()).arg(hh).arg(mm).arg(ss).arg(ee);
-    //sMessage += QString(", %1 selezionate (%2\%)").arg(_colList->count()).arg(((float)10000 * _colList->count())/_grigliaNumeri->numeroColonneSistema()/100);
     ui->statusbar->showMessage(sMessage);
     QString sLabel = QString("<B>Colonne Sistema:</B><BR> %1<BR><B>Costo Sistema:</B><BR>%2 euro").arg(_colList->count()).arg(_colList->count()/2);
-    ui->risultatoLabel->setVisible(true);
     ui->risultatoLabel->setText(sLabel);
 }
 
-void QtSEnaMainWindow::on_actionSalva_triggered() {
-    QFile xmlFile(_nomeFile);
+void QtSEnaMainWindow::salva() {
+    QFile xmlFile(_salvaFile->selectedFiles().at(0));
     if(xmlFile.open(QIODevice::WriteOnly)) {
         QXmlStreamWriter xmlStream(&xmlFile);
         xmlStream.setAutoFormatting(true);
