@@ -5,6 +5,7 @@
 #include <QDialog>
 #include <QFile>
 #include <QMessageBox>
+#include <QPainter>
 #include <QTime>
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
@@ -60,6 +61,8 @@ QtSEnaMainWindow::QtSEnaMainWindow(QWidget *parent) : QMainWindow(parent), ui(ne
     _layoutGemelli = new QHBoxLayout(ui->gemelliBox);
     _layoutGrigliaNumeri= new QHBoxLayout(ui->numbersGridBox);
     _layoutPari = new QHBoxLayout(ui->pariBox);
+    _printer = NULL;
+    _printDialog = new QPrintDialog(this);
     _progressDialog = new QProgressDialog();
     _salvaFile = new QFileDialog(this);
     _toolBar = new QToolBar(this);
@@ -103,7 +106,7 @@ QtSEnaMainWindow::QtSEnaMainWindow(QWidget *parent) : QMainWindow(parent), ui(ne
     ui->actionG5->setEnabled(false);
     ui->actionIntegrale->setChecked(true);
     ui->actionPreferenze->setEnabled(false);
-
+    ui->actionStampaColonne->setEnabled(false);
     addToolBar(_toolBar);
     _toolBar->addAction(ui->actionApri);
     _toolBar->addAction(ui->actionSalva);
@@ -124,7 +127,9 @@ QtSEnaMainWindow::QtSEnaMainWindow(QWidget *parent) : QMainWindow(parent), ui(ne
     connect(_g3, SIGNAL(clicked()), this, SLOT(on_actionG3_activated()));
     connect(_g4, SIGNAL(clicked()), this, SLOT(on_actionG4_activated()));
     connect(_g5, SIGNAL(clicked()), this, SLOT(on_actionG5_activated()));
-    connect(_integrale, SIGNAL(clicked()), this, SLOT(on_actionIntegrale_activated()));
+    connect(_integrale, SIGNAL(clicked()), this, SLOT(on_actionIntegrale_activated()));+
+    connect(ui->actionStampaSchedine, SIGNAL(triggered()), _printDialog, SLOT(exec()));
+    connect(_printDialog, SIGNAL(accepted()), this, SLOT(stampaSchedina()));
     aggiorna();
 }
 
@@ -142,6 +147,7 @@ QtSEnaMainWindow::~QtSEnaMainWindow()
     delete _layoutGemelli;
     delete _layoutGrigliaNumeri;
     delete _layoutPari;
+    delete _printDialog;
     delete _progressDialog;
     delete _salvaFile;
 }
@@ -358,4 +364,28 @@ void QtSEnaMainWindow::salva() {
         qWarning() << "[QTSENAMAINWINDOW] - on_actionSave_triggered() - Impossibile scrivere sul file " << _nomeFile;
 #endif //_DEBUG_FLAG_ENABLED
     }
+}
+
+void QtSEnaMainWindow::stampaSchedina() {
+    QPainter _painter;
+    qreal xStart = 1.0, yStart = 1.0;
+    qreal xStep = 0.125, yStep =0.125;
+
+    _printer = _printDialog->printer();
+    _printer->setPaperSize(QSizeF(95, 169), QPrinter::Millimeter);
+
+    qreal realXPos = 0;
+    qreal realYPos = 0;
+
+    Colonna colonna = _colList->at(0);
+    _painter.begin(_printer);
+    _painter.setPen(Qt::black);
+    _painter.setFont(QFont("Arial", 12));
+    _painter.drawText(rect(), colonna.stampa().join(","));
+    for (quint8 i = 0; i < _NUMERO_ELEMENTI_COLONNA; i++) {
+        realXPos = (xStart + xStep * (colonna.elementi().at(i) - (colonna.elementi().at(i) / 10) * 10)) * _printer->logicalDpiX();
+        realYPos = (yStart + yStep * (colonna.elementi().at(i) / 10)) * _printer->logicalDpiY();
+        _painter.fillRect(QRectF(realXPos, realYPos, 5.0, 5.0), Qt::black);
+    }
+    _painter.end();
 }

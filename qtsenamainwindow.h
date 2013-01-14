@@ -9,6 +9,8 @@
 #include <QFileDialog>
 #include <QHBoxLayout>
 #include <QMainWindow>
+#include <QPrinter>
+#include <QPrintDialog>
 #include <QProgressDialog>
 #include <QRadioButton>
 #include <QToolBar>
@@ -41,6 +43,8 @@ private:
     Sistema *_sistema;
     QList<Colonna > *_colList;
 
+    QPrinter *_printer;
+    QPrintDialog *_printDialog;
 private slots:
     void aggiorna();
     void apri();
@@ -50,6 +54,7 @@ private slots:
     void on_actionIntegrale_activated();
     void on_actionSistema_triggered();
     void salva();
+    void stampaSchedina();
 
 public:
     explicit QtSEnaMainWindow(QWidget *parent = 0);

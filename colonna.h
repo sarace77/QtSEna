@@ -14,6 +14,7 @@ public:
 
     quint8 consecutivi();
     quint8 dispari();
+    QList<quint8> elementi();
     quint8 gemelli();
     quint8 pari();
     quint16 somma();

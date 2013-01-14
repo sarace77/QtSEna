@@ -248,7 +248,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -257,6 +257,9 @@
     </property>
     <addaction name="actionApri"/>
     <addaction name="actionSalva"/>
+    <addaction name="separator"/>
+    <addaction name="actionStampaSchedine"/>
+    <addaction name="actionStampaColonne"/>
     <addaction name="separator"/>
     <addaction name="actionEsci"/>
    </widget>
@@ -387,6 +390,27 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+3</string>
+   </property>
+  </action>
+  <action name="actionStampaSchedine">
+   <property name="icon">
+    <iconset resource="pics.qrc">
+     <normaloff>:/icons/pics/stampa.png</normaloff>:/icons/pics/stampa.png</iconset>
+   </property>
+   <property name="text">
+    <string>S&amp;tampa Schedine</string>
+   </property>
+  </action>
+  <action name="actionStampaColonne">
+   <property name="icon">
+    <iconset resource="pics.qrc">
+     <normaloff>:/icons/pics/stampa.png</normaloff>:/icons/pics/stampa.png</iconset>
+   </property>
+   <property name="text">
+    <string>Stampa C&amp;olonne</string>
+   </property>
+   <property name="toolTip">
+    <string>Stampa Colonne</string>
    </property>
   </action>
  </widget>

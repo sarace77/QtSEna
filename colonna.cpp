@@ -30,6 +30,14 @@ quint8 Colonna::dispari() {
     return _NUMERO_ELEMENTI_COLONNA - pari();
 }
 
+QList<quint8> Colonna::elementi() {
+    QList<quint8> valori;
+    for(quint8 i = 0; i < _NUMERO_ELEMENTI_COLONNA; i++) {
+        valori.append(_colonna[i]);
+    }
+    return valori;
+}
+
 quint8 Colonna::gemelli() {
     quint8 contatore = 0;
     for(quint8 i = 0; i < _NUMERO_ELEMENTI_COLONNA; i++) {
