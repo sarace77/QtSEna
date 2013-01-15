@@ -367,25 +367,41 @@ void QtSEnaMainWindow::salva() {
 }
 
 void QtSEnaMainWindow::stampaSchedina() {
-    QPainter _painter;
-    qreal xStart = 1.0, yStart = 1.0;
-    qreal xStep = 0.125, yStep =0.125;
-
-    _printer = _printDialog->printer();
-    _printer->setPaperSize(QSizeF(95, 169), QPrinter::Millimeter);
-
+    qreal xStart = 0.078740157 , yStart = 0.039370079;
+    qreal xStep =  0.19685039, yStep = 0.11811024;
     qreal realXPos = 0;
     qreal realYPos = 0;
 
-    Colonna colonna = _colList->at(0);
+    QPainter _painter;
+    _printer = _printDialog->printer();
+    _printer->setPaperSize(QSizeF(95, 169), QPrinter::Millimeter);
+    _printer->setPageMargins(9.0, 28.0, 16.5, 36.0, QPrinter::Millimeter);
+
     _painter.begin(_printer);
-    _painter.setPen(Qt::black);
-    _painter.setFont(QFont("Arial", 12));
-    _painter.drawText(rect(), colonna.stampa().join(","));
-    for (quint8 i = 0; i < _NUMERO_ELEMENTI_COLONNA; i++) {
-        realXPos = (xStart + xStep * (colonna.elementi().at(i) - (colonna.elementi().at(i) / 10) * 10)) * _printer->logicalDpiX();
-        realYPos = (yStart + yStep * (colonna.elementi().at(i) / 10)) * _printer->logicalDpiY();
-        _painter.fillRect(QRectF(realXPos, realYPos, 5.0, 5.0), Qt::black);
+    _painter.setPen(Qt::red);
+
+    quint32 pagine = _colList->count() / 5 + 1;
+
+    for (quint32 indice = 0; indice < pagine; indice += 5) {
+        _painter.drawRect(0, 0, 14*xStep*_printer->logicalDpiX(), 7*yStep*_printer->logicalDpiY());
+        _painter.drawRect(0, 7*yStep*_printer->logicalDpiY(), 14*xStep*_printer->logicalDpiX(), 7*yStep*_printer->logicalDpiY());
+        _painter.drawRect(0, 14*yStep*_printer->logicalDpiY(), 14*xStep*_printer->logicalDpiX(), 7*yStep*_printer->logicalDpiY());
+        _painter.drawRect(0, 21*yStep*_printer->logicalDpiY(), 14*xStep*_printer->logicalDpiX(), 7*yStep*_printer->logicalDpiY());
+        _painter.drawRect(0, 28*yStep*_printer->logicalDpiY(), 14*xStep*_printer->logicalDpiX(), 7*yStep*_printer->logicalDpiY());
+        for (quint8 i = 0; i < 5 && indice + i < pagine; i++) {
+            Colonna colonna = _colList->at(indice);
+            yStart = i * 7 * yStep;
+            for (quint8 j = 0; j < _NUMERO_ELEMENTI_COLONNA; j++) {
+                quint8 _row = colonna.elementi().at(j) < 7 ? 0 : 1 + (colonna.elementi().at(j) - 6 ) / 14;
+                quint8 _col = colonna.elementi().at(j) < 7 ? 8 + colonna.elementi().at(j) : colonna.elementi().at(j) - 6 - (_row - 1) * 14;
+                realXPos = (xStart + xStep * (_col - 1)) * _printer->logicalDpiX();
+                realYPos = (yStart + yStep * _row) * _printer->logicalDpiY();
+                _painter.fillRect(QRectF(realXPos, realYPos, 5.0, 5.0), Qt::black);
+            }
+        }
+        _printer->newPage();
+        qDebug() << indice << pagine;
     }
+    printProgress.hide();
     _painter.end();
 }
